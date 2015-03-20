@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/listViewClosestCameras"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/buttonRefreshList" />
+
+    <Button
+        android:id="@+id/buttonRefreshList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/editTextGetTop"
+        android:text="Get closest cams..." />
+
+    <EditText
+        android:id="@+id/editTextGetTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/buttonRefreshList"
+        android:ems="3"
+        android:text="10" >
+
+        <requestFocus />
+    </EditText>
+
+</RelativeLayout>
