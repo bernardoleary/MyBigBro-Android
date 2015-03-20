@@ -13,10 +13,10 @@ import android.util.Log;
 
 public class LocationService {
 	
-	private DataAccessService dataAccessService;
+	private DataAccessService mDataAccessService;
 
 	public LocationService(DataAccessService dataAccessService) {
-		this.dataAccessService = dataAccessService;
+		this.mDataAccessService = dataAccessService;
 	}
 
 	public GeoMarkerDisplay locationChanged(Location loc) {		
@@ -30,7 +30,7 @@ public class LocationService {
 	    GeoMarkerDisplay geoMarkerDisplay = mapper.GeoMarkerToGeoMarkerDisplay(geoMarker);	    
 	    try {			
 			// Call the web method, capture any exception information and print
-	    	geoMarkerDisplay.setServerReponse(dataAccessService.createGeoMarker(geoMarker));
+	    	geoMarkerDisplay.setServerReponse(mDataAccessService.createGeoMarker(geoMarker));
 		} catch (Exception e) {
 			geoMarkerDisplay.setError(e.getMessage());				
 		}		    	    

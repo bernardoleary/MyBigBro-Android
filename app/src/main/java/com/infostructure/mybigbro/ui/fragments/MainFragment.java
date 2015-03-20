@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.infostructure.mybigbro.R;
 import com.infostructure.mybigbro.services.DataAccessService;
 import com.infostructure.mybigbro.services.GeoMarkerService;
-import com.infostructure.mybigbro.services.MyService;
 import com.infostructure.mybigbro.ui.OnFragmentInteractionListener;
 
 public class MainFragment extends Fragment {
@@ -33,7 +32,7 @@ public class MainFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private int mSectionNumber;
     private OnFragmentInteractionListener mListener;
-    private Switch switchGeoMarkerServiceIsRunning;
+    private Switch mSwitchGeoMarkerServiceIsRunning;
 
     // TODO: Rename and change types of parameters
     public static MainFragment newInstance(int sectionNumber) {
@@ -74,9 +73,9 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        this.switchGeoMarkerServiceIsRunning = (Switch)rootView.findViewById(R.id.switchGeoMarkerServiceIsRunning);
-        this.switchGeoMarkerServiceIsRunning.setChecked(isGeoMarkerServiceRunning());
-        this.switchGeoMarkerServiceIsRunning.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        this.mSwitchGeoMarkerServiceIsRunning = (Switch)rootView.findViewById(R.id.switchGeoMarkerServiceIsRunning);
+        this.mSwitchGeoMarkerServiceIsRunning.setChecked(isGeoMarkerServiceRunning());
+        this.mSwitchGeoMarkerServiceIsRunning.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -89,10 +88,10 @@ public class MainFragment extends Fragment {
         /* GPS Enabled check */
         LocationManager locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            this.switchGeoMarkerServiceIsRunning.setEnabled(true);
+            this.mSwitchGeoMarkerServiceIsRunning.setEnabled(true);
             //Toast.makeText(getActivity().getApplicationContext(), "GPS is Enabled on your device", Toast.LENGTH_LONG).show();
         } else{
-            this.switchGeoMarkerServiceIsRunning.setEnabled(false);
+            this.mSwitchGeoMarkerServiceIsRunning.setEnabled(false);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

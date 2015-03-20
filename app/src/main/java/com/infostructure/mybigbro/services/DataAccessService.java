@@ -63,7 +63,7 @@ public class DataAccessService {
     private final String POLL_FREQUENCY = "pollFrequency";
 	private final String USER_NAME = "userName";
 	private final String PASSWORD = "password";
-	private Context applicationContext = null;
+	private Context mApplicationContext = null;
 
     // Set up singleton
     private static DataAccessService instance = null;
@@ -85,7 +85,7 @@ public class DataAccessService {
     }
 
     public void setApplicationContext(Context applicationContext) {
-        this.applicationContext = applicationContext;
+        this.mApplicationContext = applicationContext;
     }
 
 	public String createGeoMarker(GeoMarker geoMarker) throws Exception {
@@ -191,7 +191,7 @@ public class DataAccessService {
 	}
 
     private SharedPreferences getSharedPreferences() {
-        SharedPreferences settings = this.applicationContext.getSharedPreferences(PREFS_FILE_NAME, 0);
+        SharedPreferences settings = this.mApplicationContext.getSharedPreferences(PREFS_FILE_NAME, 0);
         return settings;
     }
 }

@@ -2,22 +2,22 @@ package com.infostructure.mybigbro.model;
 
 public class GeoMarkerDisplay extends GeoMarker {
 
-	private String serverResponse;
-	private String error;
+	private String mServerResponse;
+	private String mError;
 	
 	public String getServerResponse() {
-		return this.serverResponse;
+		return this.mServerResponse;
 	}
 	
 	public void setServerReponse(String serverResponse) {
-		this.serverResponse = serverResponse;
+		this.mServerResponse = serverResponse;
 	}
 	
 	public String getError() {
-		return this.error;
+		return this.mError;
 	}
 	
 	public void setError(String error) {
-		this.error = error;
+		this.mError = error;
 	}
 }

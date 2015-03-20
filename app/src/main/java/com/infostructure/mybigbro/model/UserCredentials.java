@@ -2,29 +2,29 @@ package com.infostructure.mybigbro.model;
 
 public class UserCredentials {
 	
-	private String userName;
-	private String password;
+	private String mUserName;
+	private String mPassword;
 	
 	public UserCredentials() { }
 	
 	public UserCredentials(String userName, String password) {
-		this.userName = userName;
-		this.password = password;
+		this.mUserName = userName;
+		this.mPassword = password;
 	}
 	
 	public String getUserName() {
-		return userName;
+		return mUserName;
 	}
 	
 	public void setUserName(String userName) {
-		this.userName = userName;
+		this.mUserName = userName;
 	}
 	
 	public String getPassword() {
-		return password;
+		return mPassword;
 	}
 	
 	public void setPassword(String password) {
-		this.password = password;
+		this.mPassword = password;
 	}
 }

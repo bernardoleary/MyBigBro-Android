@@ -24,16 +24,16 @@ import com.infostructure.mybigbro.ui.activities.MainActivity;
 
 public class GeoMarkerService extends Service implements LocationListener {
 
-    private Location currentLocation;
-
     // Services
-    private DataAccessService dataAccessService;
-    private LocationService locationService;
-    private TimerService timerService;
-    private LocationManager locationManager;
+    private DataAccessService mDataAccessService;
+    private LocationService mLocationService;
+    private TimerService mTimerService;
+    private LocationManager mLocationManager;
 
-    private Intent intent = null;
-    private NotificationManager notificationManager = null;
+    // Members
+    private Location currentLocation;
+    private Intent mIntent = null;
+    private NotificationManager mNotificationManager = null;
 
     public GeoMarkerService() {
     }
@@ -49,17 +49,17 @@ public class GeoMarkerService extends Service implements LocationListener {
     public void onCreate() {
 
 		/* Create the services that we need */
-        this.dataAccessService = DataAccessService.getInstance();
-        this.dataAccessService.setApplicationContext(this.getApplicationContext());
-        locationService = new LocationService(dataAccessService);
-        timerService = new TimerService(dataAccessService);
+        this.mDataAccessService = DataAccessService.getInstance();
+        this.mDataAccessService.setApplicationContext(this.getApplicationContext());
+        this.mLocationService = new LocationService(mDataAccessService);
+        this.mTimerService = new TimerService(mDataAccessService);
 
 		/* Use the LocationManager class to obtain GPS locations */
-        locationManager = (LocationManager)this.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        this.mLocationManager = (LocationManager)this.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        this.mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
         /* Load up the notifications manager */
-        this.notificationManager = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
+        this.mNotificationManager = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Log.d(TAG, "onCreate");
     }
@@ -73,7 +73,7 @@ public class GeoMarkerService extends Service implements LocationListener {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, Notification.FLAG_ONGOING_EVENT);
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         notification.setLatestEventInfo(this, "My Big Bro", "My Big Bro is Running", contentIntent);
-        notificationManager.notify(1, notification);
+        this.mNotificationManager.notify(1, notification);
     }
 
     @Override
@@ -85,14 +85,14 @@ public class GeoMarkerService extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        locationManager.removeUpdates(this);
-        notificationManager.cancelAll();
+        this.mLocationManager.removeUpdates(this);
+        this.mNotificationManager.cancelAll();
         Log.d(TAG, "onDestroy");
     }
 
     @Override
     public void onLocationChanged(Location loc) {
-        if (timerService.timerSequenceExpired()) {
+        if (this.mTimerService.timerSequenceExpired()) {
             currentLocation = loc;
             this.update();
         }
@@ -115,7 +115,7 @@ public class GeoMarkerService extends Service implements LocationListener {
 
     private void update() {
         if (currentLocation != null) {
-            GeoMarkerDisplay geoMarkerDisplay = locationService.locationChanged(currentLocation);
+            GeoMarkerDisplay geoMarkerDisplay = this.mLocationService.locationChanged(currentLocation);
             /* Not currently doing anything in the UI with this information
             *
             try {

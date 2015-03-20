@@ -9,16 +9,16 @@ import android.graphics.BitmapFactory;
 
 public class ImageService {
 	
-	private DataAccessService dataAccessService;
+	private DataAccessService mDataAccessService;
 
 	public ImageService(DataAccessService dataAccessService) {
-		this.dataAccessService = dataAccessService;
+		this.mDataAccessService = dataAccessService;
 	}
 	
 	public Bitmap getLatestBitmapImage() { 
 		String url = null;
 		try {
-			url = dataAccessService.getLastestImageUrl();
+			url = mDataAccessService.getLastestImageUrl();
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

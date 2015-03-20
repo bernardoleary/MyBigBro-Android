@@ -35,24 +35,24 @@ import com.infostructure.mybigbro.model.dto.JsonSerialisable;
 
 public class WebService{
 
-    DefaultHttpClient httpClient;
-    HttpContext localContext;
-    private String ret;
-    HttpResponse response = null;
-    HttpPost httpPost = null;
-    HttpGet httpGet = null;
-    HttpPut httpPut = null;
-    HttpDelete httpDelete = null;
-    String webServiceUrl;
+    DefaultHttpClient mHttpClient;
+    HttpContext mLocalContext;
+    private String mRet;
+    HttpResponse mResponse = null;
+    HttpPost mHttpPost = null;
+    HttpGet mHttpGet = null;
+    HttpPut mHttpPut = null;
+    HttpDelete mHttpDelete = null;
+    String mWebServiceUrl;
 
     //The serviceName should be the name of the Service you are going to be using.
     public WebService(String serviceName) {
         HttpParams myParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(myParams, 10000);
         HttpConnectionParams.setSoTimeout(myParams, 10000);
-        httpClient = new DefaultHttpClient(myParams);
-        localContext = new BasicHttpContext();
-        webServiceUrl = serviceName;
+        this.mHttpClient = new DefaultHttpClient(myParams);
+        this.mLocalContext = new BasicHttpContext();
+        this.mWebServiceUrl = serviceName;
     }
 
     // POST
@@ -64,36 +64,36 @@ public class WebService{
 
     // POST
     private String webInvoke(String methodName, String data, String queryString, String contentType) {
-        ret = null;
-        httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.RFC_2109);
-        httpPost = new HttpPost(webServiceUrl + methodName + queryString);
-        response = null;
+        this.mRet = null;
+        this.mHttpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.RFC_2109);
+        this.mHttpPost = new HttpPost(this.mWebServiceUrl + methodName + queryString);
+        this.mResponse = null;
         StringEntity tmp = null;        
-        //httpPost.setHeader("User-Agent", "SET YOUR USER AGENT STRING HERE");
-        httpPost.setHeader("Accept", "text/html,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
+        //this.mHttpPost.setHeader("User-Agent", "SET YOUR USER AGENT STRING HERE");
+        this.mHttpPost.setHeader("Accept", "text/html,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
         if (contentType != null) {
-            httpPost.setHeader("Content-Type", contentType);
+            this.mHttpPost.setHeader("Content-Type", contentType);
         } else {
-            httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            this.mHttpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
         }
         try {
             tmp = new StringEntity(data, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             Log.e("MyBigBro", "HttpUtils : UnsupportedEncodingException : " + e);
         }
-        httpPost.setEntity(tmp);
-        Log.d("MyBigBro", webServiceUrl + "&" + data);
+        this.mHttpPost.setEntity(tmp);
+        Log.d("MyBigBro", this.mWebServiceUrl + "&" + data);
         try {
-            response = httpClient.execute(httpPost, localContext);
-            if (response != null) {
-            	StatusLine statusLine = response.getStatusLine();
-            	ret = statusLine.getStatusCode() + " - " + statusLine.getReasonPhrase();
-            	//ret = EntityUtils.toString(response.getEntity());
+            this.mResponse = this.mHttpClient.execute(this.mHttpPost, this.mLocalContext);
+            if (this.mResponse != null) {
+            	StatusLine statusLine = this.mResponse.getStatusLine();
+            	this.mRet = statusLine.getStatusCode() + " - " + statusLine.getReasonPhrase();
+            	//this.mRet = EntityUtils.toString(this.mResponse.getEntity());
             }
         } catch (Exception e) {
             Log.e("MyBigBro", "HttpUtils: " + e);
         }
-        return ret;
+        return this.mRet;
     }
 
     // PUT
@@ -105,75 +105,75 @@ public class WebService{
 
     // PUT
     private String webPut(String methodName, String data, String queryString, String contentType) {
-        ret = null;
-        httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.RFC_2109);
-        httpPut = new HttpPut(webServiceUrl + methodName + queryString);
-        response = null;
+        this.mRet = null;
+        this.mHttpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.RFC_2109);
+        this.mHttpPut = new HttpPut(this.mWebServiceUrl + methodName + queryString);
+        this.mResponse = null;
         StringEntity tmp = null;        
-        //httpPost.setHeader("User-Agent", "SET YOUR USER AGENT STRING HERE");
-        httpPut.setHeader("Accept", "text/html,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
+        //this.mHttpPost.setHeader("User-Agent", "SET YOUR USER AGENT STRING HERE");
+        this.mHttpPut.setHeader("Accept", "text/html,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
         if (contentType != null) {
-        	httpPut.setHeader("Content-Type", contentType);
+        	this.mHttpPut.setHeader("Content-Type", contentType);
         } else {
-        	httpPut.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        	this.mHttpPut.setHeader("Content-Type", "application/x-www-form-urlencoded");
         }
         try {
             tmp = new StringEntity(data, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             Log.e("MyBigBro", "HttpUtils : UnsupportedEncodingException : " + e);
         }
-        httpPut.setEntity(tmp);
-        Log.d("MyBigBro", webServiceUrl + "&" + data);
+        this.mHttpPut.setEntity(tmp);
+        Log.d("MyBigBro", this.mWebServiceUrl + "&" + data);
         try {
-            response = httpClient.execute(httpPut, localContext);
+            this.mResponse = this.mHttpClient.execute(this.mHttpPut, this.mLocalContext);
 
-            if (response != null) {
-                ret = EntityUtils.toString(response.getEntity());
+            if (this.mResponse != null) {
+                this.mRet = EntityUtils.toString(this.mResponse.getEntity());
             }
         } catch (Exception e) {
             Log.e("MyBigBro", "HttpUtils: " + e);
         }
-        return ret;
+        return this.mRet;
     }
     
     // GET
     // Use this method to do a HttpGet/WebGet on the web service
     public String webGet(String methodName, Map<String, String> params) {  	
-    	String url = webServiceUrl + methodName + getQueryString(params); 	
-        httpGet = new HttpGet(url);
+    	String url = this.mWebServiceUrl + methodName + getQueryString(params);
+        this.mHttpGet = new HttpGet(url);
         Log.e("WebGetURL: ",url);
         try {
-            response = httpClient.execute(httpGet);
+            this.mResponse = this.mHttpClient.execute(this.mHttpGet);
         } catch (Exception e) {
             Log.e("MyBigBro:", e.getMessage());
         }
-        // we assume that the response body contains the error message
+        // we assume that the this.mResponse body contains the error message
         try {
-            ret = EntityUtils.toString(response.getEntity());
+            this.mRet = EntityUtils.toString(this.mResponse.getEntity());
         } catch (IOException e) {
             Log.e("MyBigBro:", e.getMessage());
         }
-        return ret;
+        return mRet;
     }
     
     // DELETE
     // Use this method to do a HttpGet/WebGet on the web service
     public String webDelete(String methodName, Map<String, String> params) {    	
-    	String url = webServiceUrl + methodName + getQueryString(params); 	
-        httpDelete = new HttpDelete(url);
+    	String url = this.mWebServiceUrl + methodName + getQueryString(params);
+        this.mHttpDelete = new HttpDelete(url);
         Log.e("WebDeleteURL: ",url);
         try {
-            response = httpClient.execute(httpDelete);
+            this.mResponse = this.mHttpClient.execute(this.mHttpDelete);
         } catch (Exception e) {
             Log.e("MyBigBro:", e.getMessage());
         }
-        // we assume that the response body contains the error message
+        // we assume that the this.mResponse body contains the error message
         try {
-            ret = EntityUtils.toString(response.getEntity());
+            this.mRet = EntityUtils.toString(this.mResponse.getEntity());
         } catch (IOException e) {
             Log.e("MyBigBro:", e.getMessage());
         }
-        return ret;
+        return this.mRet;
     }
     
     // Get the query string for this request.

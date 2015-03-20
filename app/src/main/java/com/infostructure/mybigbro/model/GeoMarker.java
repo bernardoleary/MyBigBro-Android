@@ -4,37 +4,37 @@ import java.util.Date;
 
 public class GeoMarker {
 
-	private Date markerDateTime;
-	private double xCoord;
-	private double yCoord;
+	private Date mMarkerDateTime;
+	private double mXCoord;
+	private double mYCoord;
 	
 	public Date getMarkerDateTime()
 	{
-		return this.markerDateTime;
+		return this.mMarkerDateTime;
 	}
 	
 	public double getXCoord()
 	{
-		return this.xCoord;
+		return this.mXCoord;
 	}
 	
 	public double getYCoord()
 	{
-		return this.yCoord;
+		return this.mYCoord;
 	}
 	
 	public void setMarkerDateTime(Date markerDateTime)
 	{
-		this.markerDateTime = markerDateTime;
+		this.mMarkerDateTime = markerDateTime;
 	}
 	
 	public void setXCoord(double xCoord)
 	{
-		this.xCoord = xCoord;
+		this.mXCoord = xCoord;
 	}
 	
 	public void setYCoord(double yCoord)
 	{
-		this.yCoord = yCoord;
+		this.mYCoord = yCoord;
 	} 
 }

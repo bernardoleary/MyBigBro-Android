@@ -4,26 +4,26 @@ import java.util.Date;
 
 public class CapturedImage {
 
-	private String url;
-	private Date dateTimeCaptured;
+	private String mUrl;
+	private Date mDateTimeCaptured;
 	
 	public String getUrl()
 	{
-		return this.url;
+		return this.mUrl;
 	}
 	
 	public Date getDateTimeCaptured()
 	{
-		return this.dateTimeCaptured;
+		return this.mDateTimeCaptured;
 	}
 	
 	public void setUrl(String url)
 	{
-		this.url = url;
+		this.mUrl = url;
 	}
 	
 	public void setDateTimeCaptured(Date dateTimeCaptured)
 	{
-		this.dateTimeCaptured = dateTimeCaptured;
+		this.mDateTimeCaptured = dateTimeCaptured;
 	}
 }

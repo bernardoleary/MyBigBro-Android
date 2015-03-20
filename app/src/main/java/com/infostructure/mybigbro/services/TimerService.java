@@ -6,24 +6,24 @@ import android.util.Log;
 
 public class TimerService {
 	
-	private DataAccessService dataAccessService;
-	long pollFrequencyMillis = 60000; // set default of 1 minute
-	long pollFrequencySeconds = 60; // set default of 1 minute
-	private long time = 0;
+	private DataAccessService mDataAccessService;
+	private long mPollFrequencyMillis = 60000; // set default of 1 minute
+    private long mPollFrequencySeconds = 60; // set default of 1 minute
+	private long mTime = 0;
 
 	public TimerService(DataAccessService dataAccessService) {
-		this.dataAccessService = dataAccessService;
+		this.mDataAccessService = dataAccessService;
 	}
 		
 	public boolean timerSequenceExpired() {
 		try {
-			pollFrequencyMillis = dataAccessService.getPollFrequency();
+            mPollFrequencyMillis = this.mDataAccessService.getPollFrequency();
 		} catch (Exception e) {
 			Log.e("MyBigBro", "Exception : " + e.getMessage());
 		}
 		long currentTime = Calendar.getInstance().getTime().getTime();
-		if (currentTime - time > pollFrequencyMillis) {
-			time = currentTime;
+		if (currentTime - this.mTime > this.mPollFrequencyMillis) {
+			this.mTime = currentTime;
 			return true;
 		}
 		return false;
@@ -31,9 +31,9 @@ public class TimerService {
 	
 	public int getTimerIntervalInSeconds() {
 		try {
-			return (int) (dataAccessService.getPollFrequency()/1000);
+			return (int) (this.mDataAccessService.getPollFrequency()/1000);
 		} catch (Exception e) {
-			return (int) pollFrequencySeconds;
+			return (int) this.mPollFrequencySeconds;
 		}
 	}
 }

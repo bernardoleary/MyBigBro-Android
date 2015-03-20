@@ -16,10 +16,10 @@ import android.widget.Toast;
 
 public class SettingsActivity extends Activity implements UserInterface {	
 
-	private EditText editTextPollFrequency = null;
-	private EditText editDeviceName = null;
-	private Button buttonSave = null;
-	private DataAccessService dataAccessService = null;
+	private EditText mEditTextPollFrequency = null;
+	private EditText mEditDeviceName = null;
+	private Button mButtonSave = null;
+	private DataAccessService mDataAccessService = null;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -27,8 +27,8 @@ public class SettingsActivity extends Activity implements UserInterface {
 		setContentView(R.layout.settings);
 		
 		// setup our data access manager
-		dataAccessService = DataAccessService.getInstance();
-        dataAccessService.setApplicationContext(getApplicationContext());
+        mDataAccessService = DataAccessService.getInstance();
+        mDataAccessService.setApplicationContext(getApplicationContext());
 		
 		// initialise UI
 		try {
@@ -43,12 +43,12 @@ public class SettingsActivity extends Activity implements UserInterface {
 	public void initControls() throws Exception {
 		
 		// setup the controls
-		buttonSave = (Button)findViewById(R.id.buttonSave);
-		editTextPollFrequency = (EditText)findViewById(R.id.editTextPollFrequency);
-		editDeviceName = (EditText)findViewById(R.id.editDeviceName);
+		mButtonSave = (Button)findViewById(R.id.buttonSave);
+		mEditTextPollFrequency = (EditText)findViewById(R.id.editTextPollFrequency);
+		mEditDeviceName = (EditText)findViewById(R.id.editDeviceName);
 		
 		// save button event
-		buttonSave.setOnClickListener(new View.OnClickListener() {			
+		mButtonSave.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				saveSettings();
@@ -56,19 +56,19 @@ public class SettingsActivity extends Activity implements UserInterface {
 		});
 		
 		// setup the textbox contents
-		long pollFrequency = dataAccessService.getPollFrequency();
-		editTextPollFrequency.setText(Long.toString(pollFrequency));
-		String deviceName = dataAccessService.getDeviceName();
-		editDeviceName.setText(deviceName);
+		long pollFrequency = mDataAccessService.getPollFrequency();
+		mEditTextPollFrequency.setText(Long.toString(pollFrequency));
+		String deviceName = mDataAccessService.getDeviceName();
+		mEditDeviceName.setText(deviceName);
 	}
 	
 	private void saveSettings() {
-		long pollFrequency = Long.parseLong(editTextPollFrequency.getText().toString());
-		String deviceName = editDeviceName.getText().toString();
+		long pollFrequency = Long.parseLong(mEditTextPollFrequency.getText().toString());
+		String deviceName = mEditDeviceName.getText().toString();
 		try {
 			//dataAccess.setUserCredentials(userCrednetials);
-			dataAccessService.setPollFrequency(pollFrequency);
-			dataAccessService.setDeviceName(deviceName);
+			mDataAccessService.setPollFrequency(pollFrequency);
+			mDataAccessService.setDeviceName(deviceName);
 			
 			Context context = getApplicationContext();
 			CharSequence text = "Settings Saved...";
