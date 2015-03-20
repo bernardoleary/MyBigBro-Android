@@ -193,6 +193,7 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
         this.simpleAdpter.notifyDataSetChanged();
     }
 
+    // For the ListView
     private class WebCamArrayAdapter extends ArrayAdapter<WebCamExtendedInfoDto> {
 
         HashMap<WebCamExtendedInfoDto, Integer> mIdMap = new HashMap<WebCamExtendedInfoDto, Integer>();
