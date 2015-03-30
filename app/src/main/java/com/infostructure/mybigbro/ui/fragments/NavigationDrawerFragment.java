@@ -105,7 +105,8 @@ public class NavigationDrawerFragment extends Fragment {
                 android.R.id.text1,
                 new String[]{
                         getString(R.string.title_dashboard),
-                        getString(R.string.title_nearestcams)
+                        getString(R.string.title_nearestcams),
+                        getString(R.string.title_map)
                 }));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
@@ -258,7 +259,8 @@ public class NavigationDrawerFragment extends Fragment {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setTitle(R.string.app_name);
+        // Comment this so we only show the current fragement's name.
+        //actionBar.setTitle(R.string.app_name);
     }
 
     private ActionBar getActionBar() {

@@ -66,7 +66,7 @@ public class GeoMarkerService extends Service implements LocationListener {
 
     @SuppressWarnings("deprecation")
     private void showTrackingNotification(){
-        Notification notification = new Notification(R.drawable.ic_drawer, "My Big Bro is Running", System.currentTimeMillis());
+        Notification notification = new Notification(R.drawable.ic_launcher, "My Big Bro is Running", System.currentTimeMillis());
         Intent intent = new Intent(this, MainActivity.class);
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);

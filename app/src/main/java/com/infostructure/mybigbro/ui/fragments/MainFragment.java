@@ -33,8 +33,8 @@ public class MainFragment extends Fragment {
     private int mSectionNumber;
     private OnFragmentInteractionListener mListener;
     private Switch mSwitchGeoMarkerServiceIsRunning;
+    private LocationManager mLocationManager;
 
-    // TODO: Rename and change types of parameters
     public static MainFragment newInstance(int sectionNumber) {
         MainFragment fragment = new MainFragment();
         Bundle args = new Bundle();
@@ -73,25 +73,10 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        this.mSwitchGeoMarkerServiceIsRunning = (Switch)rootView.findViewById(R.id.switchGeoMarkerServiceIsRunning);
-        this.mSwitchGeoMarkerServiceIsRunning.setChecked(isGeoMarkerServiceRunning());
-        this.mSwitchGeoMarkerServiceIsRunning.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    getActivity().startService(new Intent(getActivity(), GeoMarkerService.class));
-                } else {
-                    getActivity().stopService(new Intent(getActivity(), GeoMarkerService.class));
-                }
-            }
-        });
+
         /* GPS Enabled check */
-        LocationManager locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            this.mSwitchGeoMarkerServiceIsRunning.setEnabled(true);
-            //Toast.makeText(getActivity().getApplicationContext(), "GPS is Enabled on your device", Toast.LENGTH_LONG).show();
-        } else{
-            this.mSwitchGeoMarkerServiceIsRunning.setEnabled(false);
+        this.mLocationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (!this.mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -100,10 +85,31 @@ public class MainFragment extends Fragment {
                 }
             }, 2000); // starting it in 2 seconds...
         }
+
+        /* Set up UI */
+        this.mSwitchGeoMarkerServiceIsRunning = (Switch)rootView.findViewById(R.id.switchGeoMarkerServiceIsRunning);
+        this.mSwitchGeoMarkerServiceIsRunning.setChecked(isGeoMarkerServiceRunning());
+        this.mSwitchGeoMarkerServiceIsRunning.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        getActivity().startService(new Intent(getActivity(), GeoMarkerService.class));
+                    } else {
+                        mSwitchGeoMarkerServiceIsRunning.setChecked(false);
+                        showGPSDisabledAlertToUser();
+                    }
+                } else {
+                    getActivity().stopService(new Intent(getActivity(), GeoMarkerService.class));
+                }
+            }
+        });
+
+        /* Return the view */
         return rootView;
     }
 
-    private void showGPSDisabledAlertToUser(){
+    private void showGPSDisabledAlertToUser() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
         alertDialogBuilder.setMessage("GPS must be enabled to use My Big Bro. Would you like to enable it?")
                 .setCancelable(false)

@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Switch;
@@ -55,16 +56,15 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
     // Services
     private DataAccessService dataAccessService;
 
-    // Controls
-    private Button buttonRefreshList;
-    private EditText editTextGetTop;
-    private ListView listViewClosestCameras;
-    private SimpleAdapter simpleAdpter;
+    /* UI controls */
+    private Button mButtonRefreshList;
+    private EditText mEditTextGetTop;
+    private ListView mListViewClosestCameras;
+    private ArrayAdapter<WebCamExtendedInfoDto> mWebCamArrayAdapter;
 
-    // Instance variables
-    private List<Map<String, String>> webCamsList = new ArrayList<Map<String,String>>();
+    /* Instance variables */
+    private List<WebCamExtendedInfoDto> mWebCamsList = new ArrayList<WebCamExtendedInfoDto>();
 
-    // TODO: Rename and change types of parameters
     public static NearestWebCamsFragment newInstance(int sectionNumber) {
         NearestWebCamsFragment fragment = new NearestWebCamsFragment();
         Bundle args = new Bundle();
@@ -97,42 +97,34 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
         this.dataAccessService = DataAccessService.getInstance();
         this.dataAccessService.setApplicationContext(this.getActivity().getApplicationContext());
 
-		/* Create and return the view */
+		/* Create the view */
         View rootView = inflater.inflate(R.layout.fragment_closest, container, false);
-        this.buttonRefreshList = (Button)rootView.findViewById(R.id.buttonRefreshList);
-        this.editTextGetTop = (EditText)rootView.findViewById(R.id.editTextGetTop);
-        this.listViewClosestCameras = (ListView)rootView.findViewById(R.id.listViewClosestCameras);
+        this.mButtonRefreshList = (Button)rootView.findViewById(R.id.buttonRefreshList);
+        this.mEditTextGetTop = (EditText)rootView.findViewById(R.id.editTextGetTop);
+        this.mListViewClosestCameras = (ListView)rootView.findViewById(R.id.listViewClosestCameras);
 
-        // save button event
-        buttonRefreshList.setOnClickListener(this);
+        /* Save button event */
+        this.mButtonRefreshList.setOnClickListener(this);
 
-        // Show the menu
+        /* Show the menu */
         setHasOptionsMenu(true);
 
-        // The data to show
+        /* The data to show */
         initList();
 
-        // We get the ListView component from the layout
-
-        // This is a simple adapter that accepts as parameter
-        // Context
-        // Data list
-        // The row layout that is used during the row creation
-        // The keys used to retrieve the data
-        // The View id used to show the data. The key number and the view id must match
-        this.simpleAdpter = new SimpleAdapter(
+        /* WebCam adapter */
+        this.mWebCamArrayAdapter = new WebCamArrayAdapter(
                 this.getActivity(),
-                webCamsList,
-                android.R.layout.simple_list_item_1, new String[] {"camera"},
-                new int[] {android.R.id.text1});
-        listViewClosestCameras.setAdapter(this.simpleAdpter);
+                R.layout.fragment_item_closest,
+                this.mWebCamsList);
+        this.mListViewClosestCameras.setAdapter(this.mWebCamArrayAdapter);
 
-        // React to user clicks on item
-        listViewClosestCameras.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /* React to user clicks on item */
+        this.mListViewClosestCameras.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position, long id) {
-                // We know the View is a TextView so we can cast it
-                TextView clickedView = (TextView) view;
-                Toast.makeText(getActivity().getApplicationContext(), "Item with id [" + id + "] - Position [" + position + "] - Planet [" + clickedView.getText() + "]", Toast.LENGTH_SHORT).show();
+                // When clicked, transfer to the simple list items
+                WebCamExtendedInfoDto webCamExtendedInfoDto = (WebCamExtendedInfoDto)parentAdapter.getItemAtPosition(position);
+                Toast.makeText(getActivity().getApplicationContext(), "Distance [" + webCamExtendedInfoDto.Distance + "] - Camera [" + webCamExtendedInfoDto.Name + "]", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -157,23 +149,19 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
         mListener = null;
     }
 
-    private HashMap<String, String> createWebCamHashMap(WebCamExtendedInfoDto webCam) {
-        HashMap<String, String> webCamDetails = new HashMap<String, String>();
-        webCamDetails.put("camera", webCam.Name);
-        webCamDetails.put("distance", Double.toString(webCam.Distance));
-        return webCamDetails;
-    }
-
     private void initList() {
-        // Get the list of cameras
+
+        /* Get the list of cameras */
         int numWebCamDtos = 0;
         try {
-            numWebCamDtos = Integer.valueOf(editTextGetTop.getText().toString());
+            numWebCamDtos = Integer.valueOf(this.mEditTextGetTop.getText().toString());
         } catch (NumberFormatException e) {
             Log.d("Error: ", e.toString());
-            editTextGetTop.setText("0");
+            this.mEditTextGetTop.setText("0");
             return;
         }
+
+        /* Query the service */
         WebCamExtendedInfoDto[] webCamExtendedInfoDtos;
         try {
             webCamExtendedInfoDtos = this.dataAccessService.getNearestManyWebCams(numWebCamDtos);
@@ -181,28 +169,67 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
             Log.d("Error: ", e.toString());
             return;
         }
-        // We populate the cameras
-        webCamsList.clear();
-        for(int i=0; i<numWebCamDtos; i++)
-            webCamsList.add(createWebCamHashMap(webCamExtendedInfoDtos[i]));
+
+        /* We populate the cameras, if there are any */
+        if (webCamExtendedInfoDtos != null) {
+            this.mWebCamsList.clear();
+            for (int i = 0; i < numWebCamDtos; i++)
+                this.mWebCamsList.add(webCamExtendedInfoDtos[i]);
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(), "No cameras found nearby.\nAt least one geo-marker is required to determine what cameras are nearby.\nHave you switched on geo-marker collection yet?", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     public void onClick(View view) {
         initList();
-        this.simpleAdpter.notifyDataSetChanged();
+        this.mWebCamArrayAdapter.notifyDataSetChanged();
     }
 
-    // For the ListView
+    /* For the ListView */
     private class WebCamArrayAdapter extends ArrayAdapter<WebCamExtendedInfoDto> {
 
         HashMap<WebCamExtendedInfoDto, Integer> mIdMap = new HashMap<WebCamExtendedInfoDto, Integer>();
+        int textViewResourceId;
 
         public WebCamArrayAdapter(Context context, int textViewResourceId, List<WebCamExtendedInfoDto> objects) {
             super(context, textViewResourceId, objects);
+            this.textViewResourceId = textViewResourceId;
             for (int i = 0; i < objects.size(); ++i) {
                 mIdMap.put(objects.get(i), i);
             }
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LinearLayout webCamExtendedInfoDtoView;
+
+            //Get the current alert object
+            WebCamExtendedInfoDto webCamExtendedInfoDto = getItem(position);
+
+            //Inflate the view
+            if(convertView == null)
+            {
+                webCamExtendedInfoDtoView = new LinearLayout(getContext());
+                String inflater = Context.LAYOUT_INFLATER_SERVICE;
+                LayoutInflater vi;
+                vi = (LayoutInflater)getContext().getSystemService(inflater);
+                vi.inflate(this.textViewResourceId, webCamExtendedInfoDtoView, true);
+            }
+            else
+            {
+                webCamExtendedInfoDtoView = (LinearLayout)convertView;
+            }
+
+            //Get the text boxes from the listitem.xml file
+            TextView textViewName = (TextView)webCamExtendedInfoDtoView.findViewById(R.id.textViewName);
+            TextView textViewDistance = (TextView)webCamExtendedInfoDtoView.findViewById(R.id.textViewDistance);
+
+            //Assign the appropriate data from our alert object above
+            textViewName.setText(webCamExtendedInfoDto.Name);
+            textViewDistance.setText(Double.toString(webCamExtendedInfoDto.Distance));
+
+            return webCamExtendedInfoDtoView;
         }
 
         @Override

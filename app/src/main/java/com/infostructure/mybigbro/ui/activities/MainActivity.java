@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import com.infostructure.mybigbro.R;
 import com.infostructure.mybigbro.ui.OnFragmentInteractionListener;
 import com.infostructure.mybigbro.ui.fragments.MainFragment;
+import com.infostructure.mybigbro.ui.fragments.MapFragment;
 import com.infostructure.mybigbro.ui.fragments.NavigationDrawerFragment;
 import com.infostructure.mybigbro.ui.fragments.NearestWebCamsFragment;
 
@@ -61,6 +62,14 @@ public class MainActivity extends ActionBarActivity
                         .commit();
                 getSupportActionBar().setTitle(R.string.title_nearestcams);
                 break;
+            case 2:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, MapFragment.newInstance(position + 1))
+                        .commit();
+                getSupportActionBar().setTitle(R.string.title_map);
+                break;
+            default:
+                getSupportActionBar().setTitle(R.string.app_name);
         }
     }
 
@@ -72,6 +81,9 @@ public class MainActivity extends ActionBarActivity
             case 2:
                 mTitle = getString(R.string.title_nearestcams);
                 break;
+            case 3:
+                mTitle = getString(R.string.title_map);
+                break;
         }
     }
 
@@ -79,7 +91,8 @@ public class MainActivity extends ActionBarActivity
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        // Comment this so we only show the current fragement's name.
+        //actionBar.setTitle(mTitle);
     }
 
     @Override

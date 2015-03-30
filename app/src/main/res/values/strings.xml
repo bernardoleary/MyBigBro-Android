@@ -8,4 +8,7 @@
     <string name="title_map">Map</string>
     <string name="poll_frequency">Poll freq (ms): </string>
     <string name="device_name">Device name: </string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

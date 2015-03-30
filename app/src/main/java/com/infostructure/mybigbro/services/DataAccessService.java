@@ -41,11 +41,14 @@ public class DataAccessService {
 	
 	/* == */
 	/* TEST */
+    // Default Android emulator
 	//private final String URL = "http://10.0.2.2:58000/api/";
+    // Genymotion Android emulator: http://blog.zeezonline.com/2013/11/access-localhost-from-genymotion/
+    private final String URL = "http://10.0.3.2:58000/api/";
 	/* == */
 	/* PROD */
 	/* == */
-	private final String URL = "http://www.mybigbro.tv/api/";
+	//private final String URL = "http://www.mybigbro.tv/api/";
 	/* == */
 	
 	private final String PREFS_FILE_NAME = "prefs";
