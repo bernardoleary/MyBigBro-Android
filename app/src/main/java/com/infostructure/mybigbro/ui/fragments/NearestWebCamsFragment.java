@@ -2,11 +2,13 @@ package com.infostructure.mybigbro.ui.fragments;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -124,7 +126,12 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position, long id) {
                 // When clicked, transfer to the simple list items
                 WebCamExtendedInfoDto webCamExtendedInfoDto = (WebCamExtendedInfoDto)parentAdapter.getItemAtPosition(position);
-                Toast.makeText(getActivity().getApplicationContext(), "Distance [" + webCamExtendedInfoDto.Distance + "] - Camera [" + webCamExtendedInfoDto.Name + "]", Toast.LENGTH_SHORT).show();
+                LatestWebCamImageDialogFragment newFragment = new LatestWebCamImageDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("url", webCamExtendedInfoDto.Url);
+                newFragment.setArguments(bundle);
+                newFragment.show(getActivity().getSupportFragmentManager(), webCamExtendedInfoDto.Url);
+                //Toast.makeText(getActivity().getApplicationContext(), "Distance [" + webCamExtendedInfoDto.Distance + "] - Camera [" + webCamExtendedInfoDto.Name + "]", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -232,11 +239,13 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
             return webCamExtendedInfoDtoView;
         }
 
+        /*
         @Override
         public long getItemId(int position) {
             WebCamExtendedInfoDto item = getItem(position);
             return mIdMap.get(item);
         }
+        */
 
         @Override
         public boolean hasStableIds() {
