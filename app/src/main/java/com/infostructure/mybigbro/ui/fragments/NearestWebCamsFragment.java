@@ -129,6 +129,10 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
                 LatestWebCamImageDialogFragment newFragment = new LatestWebCamImageDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("url", webCamExtendedInfoDto.Url);
+                bundle.putString("name", webCamExtendedInfoDto.Name);
+                bundle.putDouble("distance", webCamExtendedInfoDto.Distance);
+                bundle.putDouble("xcoord", webCamExtendedInfoDto.XCoord);
+                bundle.putDouble("ycoord", webCamExtendedInfoDto.YCoord);
                 newFragment.setArguments(bundle);
                 newFragment.show(getActivity().getSupportFragmentManager(), webCamExtendedInfoDto.Url);
                 //Toast.makeText(getActivity().getApplicationContext(), "Distance [" + webCamExtendedInfoDto.Distance + "] - Camera [" + webCamExtendedInfoDto.Name + "]", Toast.LENGTH_SHORT).show();
@@ -234,7 +238,7 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
 
             //Assign the appropriate data from our alert object above
             textViewName.setText(webCamExtendedInfoDto.Name);
-            textViewDistance.setText(Double.toString(webCamExtendedInfoDto.Distance));
+            textViewDistance.setText((double)Math.round(webCamExtendedInfoDto.Distance * 100)/100 + "km away from you.");
 
             return webCamExtendedInfoDtoView;
         }

@@ -44,11 +44,11 @@ public class DataAccessService {
     // Default Android emulator
 	//private final String URL = "http://10.0.2.2:58000/api/";
     // Genymotion Android emulator: http://blog.zeezonline.com/2013/11/access-localhost-from-genymotion/
-    //private final String URL = "http://10.0.3.2:58000/api/";
+    private final String URL = "http://10.0.3.2:58000/api/";
 	/* == */
 	/* PROD */
 	/* == */
-	private final String URL = "http://www.mybigbro.tv/api/";
+	//private final String URL = "http://www.mybigbro.tv/api/";
 	/* == */
 	
 	private final String PREFS_FILE_NAME = "prefs";
@@ -66,6 +66,7 @@ public class DataAccessService {
     private final String POLL_FREQUENCY = "pollFrequency";
 	private final String USER_NAME = "userName";
 	private final String PASSWORD = "password";
+    private final String RANDOM_WORD_URL = "http://randomword.setgetgo.com/get.php";
 	private Context mApplicationContext = null;
 
     // Set up singleton
@@ -77,6 +78,11 @@ public class DataAccessService {
         if (instance == null) {
             instance = new DataAccessService();
         }
+        instance.setStrictModeThreadPolicyOff();
+        return instance;
+    }
+
+    public void setStrictModeThreadPolicyOff() {
         /*
         Turn "StrictMode" off:
         http://blog.vogella.com/2012/02/22/android-strictmode-networkonmainthreadexception/
@@ -84,7 +90,6 @@ public class DataAccessService {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         /***/
-        return instance;
     }
 
     public void setApplicationContext(Context applicationContext) {
@@ -163,12 +168,26 @@ public class DataAccessService {
 	}
 
 	public String getDeviceName() throws Exception {		
-		// set user credentials and return		
+		// Try to find device name in shared preferences...
 		SharedPreferences settings = getSharedPreferences();
-		String defaultDeviceName = UUID.randomUUID().toString();
-		String deviceName = settings.getString(DEVICE_NAME, defaultDeviceName);
-		if (defaultDeviceName == deviceName)
-			this.setDeviceName(deviceName);
+        String defaultDeviceName = "default";
+        String deviceName = settings.getString(DEVICE_NAME, defaultDeviceName);
+        // If it's not in shared preferences try to get a random word...
+        if (defaultDeviceName == deviceName) {
+            WebService webService = new WebService(RANDOM_WORD_URL);
+            String randomWord = webService.webGet("", new HashMap<String, String>());
+            if (randomWord != "") {
+                deviceName = randomWord.trim();
+                this.setDeviceName(deviceName);
+            }
+        }
+        // If it's not in shared preferences and we weren't able to get a random word set to a UUID...
+        if (defaultDeviceName == deviceName) {
+            String randomString = UUID.randomUUID().toString();
+            deviceName = randomString;
+            this.setDeviceName(deviceName);
+        }
+        // Return the device name...
 		return deviceName;		
 	}
 		

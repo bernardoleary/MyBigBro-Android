@@ -1,13 +1,29 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.infostructure.mybigbro.ui.fragments.MainFragment">
 
-    <Switch
+    <ToggleButton
+        android:id="@+id/toggleButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Geo-marker collection is: "
-        android:id="@+id/switchGeoMarkerServiceIsRunning"
-        android:layout_gravity="center" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/toggle_selector"
+        android:checked="false"
+        android:text=""
+        android:textOff=""
+        android:textOn="" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toggleButton1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout >

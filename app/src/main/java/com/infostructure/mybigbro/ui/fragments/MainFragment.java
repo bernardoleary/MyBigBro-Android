@@ -16,7 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.infostructure.mybigbro.R;
 import com.infostructure.mybigbro.services.DataAccessService;
@@ -34,6 +36,9 @@ public class MainFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private Switch mSwitchGeoMarkerServiceIsRunning;
     private LocationManager mLocationManager;
+
+    ToggleButton toggleButton;
+    TextView text;
 
     public static MainFragment newInstance(int sectionNumber) {
         MainFragment fragment = new MainFragment();
@@ -86,7 +91,29 @@ public class MainFragment extends Fragment {
             }, 2000); // starting it in 2 seconds...
         }
 
+        toggleButton = (ToggleButton)rootView.findViewById(R.id.toggleButton1);
+        toggleButton.setChecked(isGeoMarkerServiceRunning());
+        text = (TextView)rootView.findViewById(R.id.textView1);
+        text.setText("Status: " + isGeoMarkerServiceRunning());
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
+                if (isChecked) {
+                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        getActivity().startService(new Intent(getActivity(), GeoMarkerService.class));
+                    } else {
+                        toggleButton.setChecked(false);
+                        showGPSDisabledAlertToUser();
+                    }
+                } else {
+                    getActivity().stopService(new Intent(getActivity(), GeoMarkerService.class));
+                }
+                text.setText("Status: " + toggleButton.isChecked());
+            }
+        });
+
         /* Set up UI */
+        /*
         this.mSwitchGeoMarkerServiceIsRunning = (Switch)rootView.findViewById(R.id.switchGeoMarkerServiceIsRunning);
         this.mSwitchGeoMarkerServiceIsRunning.setChecked(isGeoMarkerServiceRunning());
         this.mSwitchGeoMarkerServiceIsRunning.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -104,6 +131,7 @@ public class MainFragment extends Fragment {
                 }
             }
         });
+        */
 
         /* Return the view */
         return rootView;

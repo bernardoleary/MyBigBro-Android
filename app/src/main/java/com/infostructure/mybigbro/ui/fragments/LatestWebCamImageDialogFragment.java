@@ -17,12 +17,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.infostructure.mybigbro.R;
+import com.infostructure.mybigbro.model.GeoMarker;
+import com.infostructure.mybigbro.services.DataAccessService;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,11 +36,19 @@ import java.net.URL;
 public class LatestWebCamImageDialogFragment extends DialogFragment {
 
     private String mUrl;
+    private String mName;
+    private double mDistance;
+    private double mXCoord;
+    private double mYCoord;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mUrl = getArguments().getString("url");
+        this.mName = getArguments().getString("name");
+        this.mDistance = getArguments().getDouble("distance");
+        this.mXCoord = getArguments().getDouble("xcoord");
+        this.mYCoord = getArguments().getDouble("ycoord");
     }
 
     @Override
@@ -45,7 +59,8 @@ public class LatestWebCamImageDialogFragment extends DialogFragment {
         try {
             URL url = new URL(this.mUrl);
             imageView = new ImageView(getActivity());
-            imageView.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()));
+            URLConnection urlConnection = url.openConnection();
+            imageView.setImageBitmap(BitmapFactory.decodeStream(urlConnection.getInputStream()));
             imageView.setMinimumWidth(500);
             imageView.setMinimumHeight(500);
         } catch (MalformedURLException e) {
@@ -53,13 +68,31 @@ public class LatestWebCamImageDialogFragment extends DialogFragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        builder.setMessage(this.mUrl)
-            .setPositiveButton("fire", new DialogInterface.OnClickListener() {
+        builder.setMessage(this.mName + " (" + (double)Math.round(this.mDistance * 100)/100 + "km away from you)")
+            .setPositiveButton("Capture", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    // FIRE ZE MISSILES!
+                    /***
+                     * Capture a geo-marker right on-top of the camera - assures we get a hit.
+                     */
+                    DataAccessService dataAccessService = DataAccessService.getInstance();
+                    GeoMarker geoMarker = new GeoMarker();
+                    geoMarker.setMarkerDateTime(Calendar.getInstance().getTime());
+                    geoMarker.setXCoord(mXCoord);
+                    geoMarker.setYCoord(mYCoord);
+                    String deviceName = "(check your settings)";
+                    try {
+                        dataAccessService.createGeoMarker(geoMarker);
+                        deviceName = "'" + dataAccessService.getDeviceName() + "'";
+                    } catch (Exception e) {
+                        Log.d("Error: ", e.toString());
+                    }
+                    Toast.makeText(
+                            getActivity().getApplicationContext(),
+                            "Go to www.mybigbro.tv and search for your device " + deviceName + " to see the image you've captured!",
+                            Toast.LENGTH_LONG).show();
                 }
             })
-            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     // User cancelled the dialog
                 }
