@@ -91,10 +91,10 @@ public class MainFragment extends Fragment {
             }, 2000); // starting it in 2 seconds...
         }
 
-        toggleButton = (ToggleButton)rootView.findViewById(R.id.toggleButton1);
+        toggleButton = (ToggleButton)rootView.findViewById(R.id.toggleButton);
         toggleButton.setChecked(isGeoMarkerServiceRunning());
-        text = (TextView)rootView.findViewById(R.id.textView1);
-        text.setText("Status: " + isGeoMarkerServiceRunning());
+        //text = (TextView)rootView.findViewById(R.id.textView1);
+        //text.setText("Status: " + isGeoMarkerServiceRunning());
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
@@ -108,7 +108,7 @@ public class MainFragment extends Fragment {
                 } else {
                     getActivity().stopService(new Intent(getActivity(), GeoMarkerService.class));
                 }
-                text.setText("Status: " + toggleButton.isChecked());
+                //text.setText("Status: " + toggleButton.isChecked());
             }
         });
 

@@ -4,26 +4,19 @@
     android:layout_height="match_parent"
     tools:context="com.infostructure.mybigbro.ui.fragments.MainFragment">
 
-    <ToggleButton
-        android:id="@+id/toggleButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_centerVertical="true"
-        android:background="@drawable/toggle_selector"
-        android:checked="false"
-        android:text=""
-        android:textOff=""
-        android:textOn="" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toggleButton1"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:background="#ffffffff">
 
+        <ToggleButton
+            style="@style/toggleButton"
+            android:id="@+id/toggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_toggle_bg" />
+    </FrameLayout>
 </RelativeLayout >

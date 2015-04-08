@@ -7,28 +7,20 @@
     <ListView
         android:id="@+id/listViewClosestCameras"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/buttonRefreshList" />
+        android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/buttonRefreshList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/editTextGetTop"
-        android:text="Get closest cams..." />
-
-    <EditText
-        android:id="@+id/editTextGetTop"
+    <SeekBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/seekBarClosestCameras"
+        android:max="100"
+        android:progress="10"
+        android:focusableInTouchMode="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/buttonRefreshList"
-        android:ems="3"
-        android:text="10" >
-
-        <requestFocus />
-    </EditText>
+        android:layout_alignParentEnd="true"
+        android:splitTrack="false" />
 
 </RelativeLayout>

@@ -3,8 +3,10 @@ package com.infostructure.mybigbro.ui.fragments;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -45,7 +48,7 @@ import java.util.Map;
  * Activities containing this fragment MUST implement the {@link com.infostructure.mybigbro.ui.OnFragmentInteractionListener}
  * interface.
  */
-public class NearestWebCamsFragment extends Fragment implements View.OnClickListener {
+public class NearestWebCamsFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
 
     /**
      * The fragment argument representing the section number for this
@@ -59,10 +62,10 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
     private DataAccessService dataAccessService;
 
     /* UI controls */
-    private Button mButtonRefreshList;
-    private EditText mEditTextGetTop;
     private ListView mListViewClosestCameras;
     private ArrayAdapter<WebCamExtendedInfoDto> mWebCamArrayAdapter;
+    private SeekBar mSeekBarClosestCameras;
+    private int mSeekBarProgress = 10; // Set SeekBar progress as 10 by default, same as UI
 
     /* Instance variables */
     private List<WebCamExtendedInfoDto> mWebCamsList = new ArrayList<WebCamExtendedInfoDto>();
@@ -86,7 +89,6 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mSectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
         }
@@ -101,18 +103,16 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
 
 		/* Create the view */
         View rootView = inflater.inflate(R.layout.fragment_closest, container, false);
-        this.mButtonRefreshList = (Button)rootView.findViewById(R.id.buttonRefreshList);
-        this.mEditTextGetTop = (EditText)rootView.findViewById(R.id.editTextGetTop);
+
+        /* Create the list */
         this.mListViewClosestCameras = (ListView)rootView.findViewById(R.id.listViewClosestCameras);
 
-        /* Save button event */
-        this.mButtonRefreshList.setOnClickListener(this);
-
         /* Show the menu */
-        setHasOptionsMenu(true);
+        this.setHasOptionsMenu(true);
 
-        /* The data to show */
-        initList();
+        /* The data to show and the seekbar event */
+        this.mSeekBarClosestCameras = (SeekBar)rootView.findViewById(R.id.seekBarClosestCameras);
+        this.mSeekBarClosestCameras.setOnSeekBarChangeListener(this);
 
         /* WebCam adapter */
         this.mWebCamArrayAdapter = new WebCamArrayAdapter(
@@ -139,6 +139,9 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
             }
         });
 
+        /* Populate the list */
+        new DataDownloader().execute();
+
 		/* Return the view */
         return rootView;
     }
@@ -160,41 +163,67 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
         mListener = null;
     }
 
-    private void initList() {
-
-        /* Get the list of cameras */
-        int numWebCamDtos = 0;
-        try {
-            numWebCamDtos = Integer.valueOf(this.mEditTextGetTop.getText().toString());
-        } catch (NumberFormatException e) {
-            Log.d("Error: ", e.toString());
-            this.mEditTextGetTop.setText("0");
-            return;
-        }
-
-        /* Query the service */
-        WebCamExtendedInfoDto[] webCamExtendedInfoDtos;
-        try {
-            webCamExtendedInfoDtos = this.dataAccessService.getNearestManyWebCams(numWebCamDtos);
-        } catch (Exception e) {
-            Log.d("Error: ", e.toString());
-            return;
-        }
+    private void initList(WebCamExtendedInfoDto[] webCamExtendedInfoDtos) {
 
         /* We populate the cameras, if there are any */
         if (webCamExtendedInfoDtos != null) {
             this.mWebCamsList.clear();
-            for (int i = 0; i < numWebCamDtos; i++)
+            for (int i = 0; i < this.mSeekBarClosestCameras.getProgress(); i++) {
                 this.mWebCamsList.add(webCamExtendedInfoDtos[i]);
+            }
+            Toast.makeText(getActivity().getApplicationContext(), "Showing closest " + mSeekBarProgress + " cameras.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity().getApplicationContext(), "No cameras found nearby.\nAt least one geo-marker is required to determine what cameras are nearby.\nHave you switched on geo-marker collection yet?", Toast.LENGTH_LONG).show();
         }
+
+        /* Update the list view */
+        this.mWebCamArrayAdapter.notifyDataSetChanged();
+
     }
 
     @Override
-    public void onClick(View view) {
-        initList();
-        this.mWebCamArrayAdapter.notifyDataSetChanged();
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        this.mSeekBarProgress = progress;
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        new DataDownloader().execute();
+    }
+
+    private class DataDownloader extends AsyncTask<Void, Void, Void> {
+
+        private ProgressDialog dialog = new ProgressDialog(getActivity());
+        private WebCamExtendedInfoDto[] webCamExtendedInfoDtos = null;
+        private Exception ex = null;
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Getting cameras...");
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            /* Query the service */
+            try {
+                webCamExtendedInfoDtos = dataAccessService.getNearestManyWebCams(mSeekBarProgress);
+            } catch (Exception e) {
+                Log.d("Error: ", e.toString());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            initList(webCamExtendedInfoDtos);
+            dialog.dismiss();
+        }
     }
 
     /* For the ListView */
@@ -242,14 +271,6 @@ public class NearestWebCamsFragment extends Fragment implements View.OnClickList
 
             return webCamExtendedInfoDtoView;
         }
-
-        /*
-        @Override
-        public long getItemId(int position) {
-            WebCamExtendedInfoDto item = getItem(position);
-            return mIdMap.get(item);
-        }
-        */
 
         @Override
         public boolean hasStableIds() {

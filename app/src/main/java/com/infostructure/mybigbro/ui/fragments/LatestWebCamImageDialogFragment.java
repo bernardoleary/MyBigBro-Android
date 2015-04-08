@@ -3,11 +3,14 @@ package com.infostructure.mybigbro.ui.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.app.DialogFragment;
@@ -21,9 +24,11 @@ import android.widget.Toast;
 
 import com.infostructure.mybigbro.R;
 import com.infostructure.mybigbro.model.GeoMarker;
+import com.infostructure.mybigbro.model.dto.WebCamExtendedInfoDto;
 import com.infostructure.mybigbro.services.DataAccessService;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -40,6 +45,7 @@ public class LatestWebCamImageDialogFragment extends DialogFragment {
     private double mDistance;
     private double mXCoord;
     private double mYCoord;
+    ImageView imageView = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,11 +61,10 @@ public class LatestWebCamImageDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        ImageView imageView = null;
         try {
-            URL url = new URL(this.mUrl);
-            imageView = new ImageView(getActivity());
+            URL url = new URL(mUrl);
             URLConnection urlConnection = url.openConnection();
+            imageView = new ImageView(getActivity());
             imageView.setImageBitmap(BitmapFactory.decodeStream(urlConnection.getInputStream()));
             imageView.setMinimumWidth(500);
             imageView.setMinimumHeight(500);
@@ -68,6 +73,14 @@ public class LatestWebCamImageDialogFragment extends DialogFragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        /*
+        InputStream is = getResources().openRawResource(R.drawable.camera_loading_128);
+        Bitmap originalBitmap = BitmapFactory.decodeStream(is);
+        imageView = new ImageView(getActivity());
+        imageView.setImageBitmap(originalBitmap);
+        imageView.setMinimumWidth(500);
+        imageView.setMinimumHeight(500);
+        */
         builder.setMessage(this.mName + " (" + (double)Math.round(this.mDistance * 100)/100 + "km away from you)")
             .setPositiveButton("Capture", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -101,4 +114,33 @@ public class LatestWebCamImageDialogFragment extends DialogFragment {
         // Create the AlertDialog object and return it
         return builder.create();
     }
+
+    /*** work in progress ***
+    private class ImageDownloader extends AsyncTask<Void, Void, Void> {
+
+        private ProgressDialog dialog = new ProgressDialog(getActivity());
+        private Exception ex = null;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                URL url = new URL(mUrl);
+                URLConnection urlConnection = url.openConnection();
+                imageView.setImageBitmap(BitmapFactory.decodeStream(urlConnection.getInputStream()));
+                imageView.setMinimumWidth(500);
+                imageView.setMinimumHeight(500);
+            } catch (MalformedURLException e) {
+                Log.d("Error: ", e.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            notifyAll();
+        }
+    }
+    ***/
 }
