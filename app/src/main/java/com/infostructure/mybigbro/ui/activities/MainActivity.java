@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import com.infostructure.mybigbro.R;
 import com.infostructure.mybigbro.ui.OnFragmentInteractionListener;
 import com.infostructure.mybigbro.ui.fragments.MainFragment;
+import com.infostructure.mybigbro.ui.fragments.MapAPIv2Fragment;
 import com.infostructure.mybigbro.ui.fragments.MapFragment;
 import com.infostructure.mybigbro.ui.fragments.NavigationDrawerFragment;
 import com.infostructure.mybigbro.ui.fragments.NearestWebCamsFragment;
@@ -64,7 +65,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 2:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, MapFragment.newInstance(position + 1))
+                        .replace(R.id.container, MapAPIv2Fragment.newInstance(position + 1))
                         .commit();
                 getSupportActionBar().setTitle(R.string.title_map);
                 break;
