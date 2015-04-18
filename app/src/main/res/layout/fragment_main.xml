@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,53 +6,91 @@
     android:background="#ffffff"
     tools:context="com.infostructure.mybigbro.ui.fragments.MainFragment">
 
-
-        <ToggleButton
-            style="@style/toggleButton"
-            android:id="@+id/toggleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/ic_toggle_bg"
-            android:layout_marginTop="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Have fun!"
+        android:id="@+id/textViewMessageRunning2"
+        android:textColor="#ff000000"
+        android:background="#ffad92d4"
+        android:layout_row="10"
+        android:layout_column="0" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="For My Big Bro to work propery it needs to track this device&apos;s location. Push play!"
-        android:id="@+id/textView1"
+        android:text="Push play!"
+        android:id="@+id/textViewMessagePaused2"
         android:textColor="#ff000000"
-        android:textAlignment="center"
-        android:gravity="right"
-        android:layout_marginBottom="160dp"
-        android:layout_marginLeft="95dp"
-        android:layout_marginRight="15dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="#ffd4d4d4" />
+        android:background="#ff6bd456"
+        android:layout_row="20"
+        android:layout_column="0"
+        android:layout_gravity="right"/>
+
+    <ToggleButton
+        style="@style/toggleButton"
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/ic_toggle_bg"
+        android:layout_row="30"
+        android:layout_column="0" />
+
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="My Big Bro will continue running until paused, even when the app is closed."
+        android:id="@+id/textViewMessageRunning1"
+        android:textColor="#ff000000"
+        android:background="#ff7edd83"
+        android:layout_row="40"
+        android:layout_column="0"
+        android:layout_gravity="right"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="One started, My Big Bro will continue tracking this device's location, until paused."
-        android:id="@+id/textView2"
-        android:textColor="#ff000000"
-        android:gravity="left"
-        android:layout_marginBottom="50dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="95dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="#ffdddddd" />
+        android:text="My Big Bro uses your device&apos;s location to capture images from nearby cameras."
+        android:id="@+id/textViewMessagePaused1"
+        android:background="#ffd4a2cb"
+        android:layout_row="50"
+        android:layout_column="0" />
 
-</RelativeLayout >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/textViewPlaceholder"
+        android:layout_row="55"
+        android:layout_column="0"
+        android:layout_gravity="right|bottom"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Placeholder."
+        android:id="@+id/textViewMessageRunningDeviceName"
+        android:background="#ffd4b384"
+        android:layout_row="60"
+        android:layout_column="0"
+        android:layout_gravity="right"
+        android:gravity="right"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Placeholder."
+        android:id="@+id/textViewMessagePausedDeviceName"
+        android:background="#ff66d4ae"
+        android:layout_row="70"
+        android:layout_column="0"
+        android:layout_gravity="right"
+        android:gravity="right"/>
+
+</GridLayout >

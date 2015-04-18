@@ -14,7 +14,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Polling frequency:"
+        android:text="Check for cameras once every:"
         />
     <Spinner
         android:id="@+id/spinnerPollFrequency"
@@ -26,7 +26,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/device_name"
+        android:text="Your device's My Big Bro name:"
         />
     <EditText
         android:layout_height="wrap_content"
