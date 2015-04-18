@@ -1,7 +1,6 @@
 package com.infostructure.mybigbro.ui.activities;
 
 import com.infostructure.mybigbro.R;
-import com.infostructure.mybigbro.abstractions.UserInterface;
 import com.infostructure.mybigbro.model.UserCredentials;
 import com.infostructure.mybigbro.services.DataAccessService;
 
@@ -20,7 +19,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class SettingsActivity extends ActionBarActivity implements UserInterface {
+public class SettingsActivity extends ActionBarActivity {
 
 	private EditText mEditTextPollFrequency = null;
     private Spinner mSpinnerPollFrequency = null;
@@ -69,8 +68,7 @@ public class SettingsActivity extends ActionBarActivity implements UserInterface
 
         return super.onOptionsItemSelected(item);
     }
-	
-	@Override
+
 	public void initControls() throws Exception {
 		
 		// setup the controls

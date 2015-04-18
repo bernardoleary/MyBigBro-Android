@@ -1,28 +1,48 @@
 package com.infostructure.mybigbro.ui.fragments;
 
+import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.infostructure.mybigbro.R;
+import com.infostructure.mybigbro.model.dto.GeoMarkerDto;
+import com.infostructure.mybigbro.model.dto.WebCamExtendedInfoDto;
+import com.infostructure.mybigbro.services.DataAccessService;
 import com.infostructure.mybigbro.ui.OnFragmentInteractionListener;
+import com.infostructure.mybigbro.ui.async.WebCamExtendedInfoDownloadAsyncTask;
+import com.infostructure.mybigbro.utils.Globals;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A fragment that launches other parts of the demo application.
  */
-public class MapAPIv2Fragment extends SupportMapFragment {
+public class MapAPIv2Fragment extends SupportMapFragment implements SeekBar.OnSeekBarChangeListener, WebCamExtendedInfoFragment, GoogleMap.OnMarkerClickListener {
 
     /**
      * The fragment argument representing the section number for this
@@ -31,8 +51,17 @@ public class MapAPIv2Fragment extends SupportMapFragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private int mSectionNumber;
     private OnFragmentInteractionListener mListener;
-    MapView mMapView;
-    private GoogleMap googleMap;
+
+    /* UI controls */
+    private MapView mMapView;
+    private GoogleMap mGoogleMap;
+    private ListView mListViewClosestCameras;
+    private SeekBar mSeekBarClosestCameras;
+    private int mSeekBarProgress = 10; // Set SeekBar progress as 10 by default, same as UI
+
+    // Services
+    private DataAccessService mDataAccessService;
+    private WebCamExtendedInfoDto[] mWebCamExtendedInfoDtos;
 
     public static MapAPIv2Fragment newInstance(int sectionNumber) {
         MapAPIv2Fragment fragment = new MapAPIv2Fragment();
@@ -61,37 +90,90 @@ public class MapAPIv2Fragment extends SupportMapFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        /* For SupportMapFragment it's necessary to call the super class */
         super.onCreateView(inflater, container, savedInstanceState);
+
+		/* Create the services that we need */
+        this.mDataAccessService = DataAccessService.getInstance();
+        this.mDataAccessService.setApplicationContext(this.getActivity().getApplicationContext());
+
         // inflate and return the layout
-        View v = inflater.inflate(R.layout.fragment_map_apiv2, container, false);
-        mMapView = (MapView) v.findViewById(R.id.mapView);
+        View rootView = inflater.inflate(R.layout.fragment_map_apiv2, container, false);
+        mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();// needed to get the map to display immediately
 
+        /* Show the menu */
+        this.setHasOptionsMenu(true);
+
+        /* The data to show and the seekbar event */
+        this.mSeekBarClosestCameras = (SeekBar)rootView.findViewById(R.id.seekBarClosestCameras);
+        this.mSeekBarClosestCameras.setOnSeekBarChangeListener(this);
+
+        /* Initialise the map */
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
+            this.mGoogleMap = mMapView.getMap();
+            this.mGoogleMap.setOnMarkerClickListener(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        googleMap = mMapView.getMap();
-        // latitude and longitude
-        double latitude = 17.385044;
-        double longitude = 78.486671;
+        /* Populate the list */
+        new WebCamExtendedInfoDownloadAsyncTask(this, this.mSeekBarProgress).execute();
 
-        // create marker
-        MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Hello Maps");
+        /* Return the view */
+        return rootView;
+    }
 
-        // Changing marker icon
-        //marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+    public void initUserInterface(WebCamExtendedInfoDto[] webCamExtendedInfoDtos) {
 
-        // adding marker
-        googleMap.addMarker(marker);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(17.385044, 78.486671)).zoom(12).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        /* We populate the cameras, if there are any */
+        if (webCamExtendedInfoDtos != null) {
+            this.mWebCamExtendedInfoDtos = webCamExtendedInfoDtos;
+            this.mGoogleMap.clear();
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            /* Add markers for cameras */
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher);
+            for (int i = 0; i < this.mSeekBarClosestCameras.getProgress(); i++) {
+                MarkerOptions marker = new MarkerOptions()
+                        .position(new LatLng(webCamExtendedInfoDtos[i].YCoord, webCamExtendedInfoDtos[i].XCoord))
+                        .title(webCamExtendedInfoDtos[i].Name)
+                        .icon(icon);
+                builder.include(marker.getPosition());
+                this.mGoogleMap.addMarker(marker);
+            }
+            /* Add marker for current location */
+            GeoMarkerDto currentLocation = Globals.getGetCurrentLocation();
+            MarkerOptions marker = new MarkerOptions()
+                    .position(new LatLng(currentLocation.yCoord, currentLocation.xCoord));
+            builder.include(marker.getPosition());
+            this.mGoogleMap.addMarker(marker);
+            /* Build the marker map */
+            LatLngBounds bounds = builder.build();
+            int padding = 0; // offset from edges of the map in pixels
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            this.mGoogleMap.animateCamera(cu);
+            Toast.makeText(getActivity().getApplicationContext(), "Showing closest " + mSeekBarProgress + " cameras.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(), "No cameras found nearby.\nAt least one geo-marker is required to determine what cameras are nearby.\nHave you switched on geo-marker collection yet?", Toast.LENGTH_LONG).show();
+        }
+    }
 
-        // Perform any camera updates here
-        return v;
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        this.mSeekBarProgress = progress;
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        new WebCamExtendedInfoDownloadAsyncTask(this, this.mSeekBarProgress).execute();
     }
 
     @Override
@@ -116,5 +198,31 @@ public class MapAPIv2Fragment extends SupportMapFragment {
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        /* Match the webcam info to the marker */
+        WebCamExtendedInfoDto webCamExtendedInfoDto = null;
+        for (WebCamExtendedInfoDto webCam : this.mWebCamExtendedInfoDtos) {
+            if (webCam.Name.equals(marker.getTitle())) {
+                webCamExtendedInfoDto = webCam;
+                break;
+            }
+        }
+        /* Make sure that we have a match and continue */
+        if (webCamExtendedInfoDto != null) {
+            LatestWebCamImageDialogFragment newFragment = new LatestWebCamImageDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("url", webCamExtendedInfoDto.Url);
+            bundle.putString("name", webCamExtendedInfoDto.Name);
+            bundle.putDouble("distance", webCamExtendedInfoDto.Distance);
+            bundle.putDouble("xcoord", webCamExtendedInfoDto.XCoord);
+            bundle.putDouble("ycoord", webCamExtendedInfoDto.YCoord);
+            newFragment.setArguments(bundle);
+            newFragment.show(getActivity().getSupportFragmentManager(), webCamExtendedInfoDto.Url);
+            return true;
+        }
+        return false;
     }
 }

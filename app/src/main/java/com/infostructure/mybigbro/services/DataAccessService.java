@@ -56,10 +56,11 @@ public class DataAccessService {
 	private final String QUESTION_MARK = "?";
 	private final String AMPERSAND = "&";
 	private final String EQUALS = "=";
-	private final String GEOMARKERS = "geomarkers";
+	private final String GEOMARKERS = "geomarker";
 	private final String WEBCAM = "webcams";
 	private final String CAPTURED_IMAGES = "capturedimages";
 	private final String NEAREST = "nearestmany";
+    private final String LATEST = "latest";
 	private final String SETTINGS_FILE_NAME = "settings";
 	private final String TOP = "top";
 	private final String DEVICE_NAME = "deviceName";
@@ -129,6 +130,17 @@ public class DataAccessService {
 		CapturedImageGeoMarkerDto[] capturedImageGeoMarkerDtos = gson.fromJson(result, CapturedImageGeoMarkerDto[].class);
 		return capturedImageGeoMarkerDtos[0].capturedImage.url; //.getCapturedImage().getUrl();
 	}
+
+    public GeoMarkerDto getLastestGeoMarker() throws Exception {
+        String geoMarkersCapturedImagesUrl = URL + GEOMARKERS + FORWARD_SLASH + LATEST + QUESTION_MARK + DEVICE_NAME + EQUALS + getDeviceName();
+        WebService webService = new WebService(geoMarkersCapturedImagesUrl);
+        // Query the service
+        String result = webService.webGet("", new HashMap<String, String>());
+        // Get image URL
+        Gson gson = new GsonBuilder().create();
+        GeoMarkerDto geoMarkerDto = gson.fromJson(result, GeoMarkerDto.class);
+        return geoMarkerDto; //.getCapturedImage().getUrl();
+    }
 	
 	public UserCredentials getUserCredentials() throws Exception {
 		// set user credentials and return

@@ -104,7 +104,7 @@ public class NavigationDrawerFragment extends Fragment {
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
                 new String[]{
-                        getString(R.string.title_dashboard),
+                        getString(R.string.title_location),
                         getString(R.string.title_nearestcams),
                         getString(R.string.title_map)
                 }));

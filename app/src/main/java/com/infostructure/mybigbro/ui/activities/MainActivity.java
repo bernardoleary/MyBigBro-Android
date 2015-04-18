@@ -55,7 +55,7 @@ public class MainActivity extends ActionBarActivity
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, MainFragment.newInstance(position + 1))
                         .commit();
-                getSupportActionBar().setTitle(R.string.title_dashboard);
+                getSupportActionBar().setTitle(R.string.title_location);
                 break;
             case 1:
                 fragmentManager.beginTransaction()
@@ -77,7 +77,7 @@ public class MainActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_dashboard);
+                mTitle = getString(R.string.title_location);
                 break;
             case 2:
                 mTitle = getString(R.string.title_nearestcams);

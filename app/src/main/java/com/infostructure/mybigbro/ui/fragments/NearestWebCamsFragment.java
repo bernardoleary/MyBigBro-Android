@@ -34,6 +34,7 @@ import com.infostructure.mybigbro.model.dto.WebCamExtendedInfoDto;
 import com.infostructure.mybigbro.services.DataAccessService;
 import com.infostructure.mybigbro.services.GeoMarkerService;
 import com.infostructure.mybigbro.ui.OnFragmentInteractionListener;
+import com.infostructure.mybigbro.ui.async.WebCamExtendedInfoDownloadAsyncTask;
 import com.infostructure.mybigbro.ui.fragments.dummy.DummyContent;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ import java.util.Map;
  * Activities containing this fragment MUST implement the {@link com.infostructure.mybigbro.ui.OnFragmentInteractionListener}
  * interface.
  */
-public class NearestWebCamsFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
+public class NearestWebCamsFragment extends Fragment implements SeekBar.OnSeekBarChangeListener, WebCamExtendedInfoFragment {
 
     /**
      * The fragment argument representing the section number for this
@@ -140,7 +141,7 @@ public class NearestWebCamsFragment extends Fragment implements SeekBar.OnSeekBa
         });
 
         /* Populate the list */
-        new DataDownloader().execute();
+        new WebCamExtendedInfoDownloadAsyncTask(this, this.mSeekBarProgress).execute();
 
 		/* Return the view */
         return rootView;
@@ -163,7 +164,8 @@ public class NearestWebCamsFragment extends Fragment implements SeekBar.OnSeekBa
         mListener = null;
     }
 
-    private void initList(WebCamExtendedInfoDto[] webCamExtendedInfoDtos) {
+    @Override
+    public void initUserInterface(WebCamExtendedInfoDto[] webCamExtendedInfoDtos) {
 
         /* We populate the cameras, if there are any */
         if (webCamExtendedInfoDtos != null) {
@@ -193,41 +195,11 @@ public class NearestWebCamsFragment extends Fragment implements SeekBar.OnSeekBa
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        new DataDownloader().execute();
-    }
-
-    private class DataDownloader extends AsyncTask<Void, Void, Void> {
-
-        private ProgressDialog dialog = new ProgressDialog(getActivity());
-        private WebCamExtendedInfoDto[] webCamExtendedInfoDtos = null;
-        private Exception ex = null;
-
-        @Override
-        protected void onPreExecute() {
-            dialog.setMessage("Getting cameras...");
-            dialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            /* Query the service */
-            try {
-                webCamExtendedInfoDtos = dataAccessService.getNearestManyWebCams(mSeekBarProgress);
-            } catch (Exception e) {
-                Log.d("Error: ", e.toString());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            initList(webCamExtendedInfoDtos);
-            dialog.dismiss();
-        }
+        new WebCamExtendedInfoDownloadAsyncTask(this, this.mSeekBarProgress).execute();
     }
 
     /* For the ListView */
-    private class WebCamArrayAdapter extends ArrayAdapter<WebCamExtendedInfoDto> {
+    public class WebCamArrayAdapter extends ArrayAdapter<WebCamExtendedInfoDto> {
 
         HashMap<WebCamExtendedInfoDto, Integer> mIdMap = new HashMap<WebCamExtendedInfoDto, Integer>();
         int textViewResourceId;
