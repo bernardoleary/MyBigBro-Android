@@ -56,7 +56,7 @@ public class DataAccessService {
 	private final String QUESTION_MARK = "?";
 	private final String AMPERSAND = "&";
 	private final String EQUALS = "=";
-	private final String GEOMARKERS = "geomarker";
+	private final String GEOMARKERS = "geomarkers";
 	private final String WEBCAM = "webcams";
 	private final String CAPTURED_IMAGES = "capturedimages";
 	private final String NEAREST = "nearestmany";
