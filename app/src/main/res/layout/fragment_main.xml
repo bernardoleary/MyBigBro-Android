@@ -3,14 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:configChanges="keyboardHidden|orientation|screenSize"
+    android:background="#ffffff"
     tools:context="com.infostructure.mybigbro.ui.fragments.MainFragment">
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:background="#ffffffff">
 
         <ToggleButton
             style="@style/toggleButton"
@@ -18,7 +13,46 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/ic_toggle_bg" />
+            android:background="@drawable/ic_toggle_bg"
+            android:layout_marginTop="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
 
-    </FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="For My Big Bro to work propery it needs to track this device&apos;s location. Push play!"
+        android:id="@+id/textView1"
+        android:textColor="#ff000000"
+        android:textAlignment="center"
+        android:gravity="right"
+        android:layout_marginBottom="160dp"
+        android:layout_marginLeft="95dp"
+        android:layout_marginRight="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="#ffd4d4d4" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="One started, My Big Bro will continue tracking this device's location, until paused."
+        android:id="@+id/textView2"
+        android:textColor="#ff000000"
+        android:gravity="left"
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="95dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="#ffdddddd" />
+
 </RelativeLayout >

@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -216,10 +217,10 @@ public class NearestWebCamsFragment extends Fragment implements SeekBar.OnSeekBa
         public View getView(int position, View convertView, ViewGroup parent) {
             LinearLayout webCamExtendedInfoDtoView;
 
-            //Get the current alert object
+            // Get the current alert object
             WebCamExtendedInfoDto webCamExtendedInfoDto = getItem(position);
 
-            //Inflate the view
+            // Inflate the view
             if(convertView == null)
             {
                 webCamExtendedInfoDtoView = new LinearLayout(getContext());
@@ -233,14 +234,22 @@ public class NearestWebCamsFragment extends Fragment implements SeekBar.OnSeekBa
                 webCamExtendedInfoDtoView = (LinearLayout)convertView;
             }
 
-            //Get the text boxes from the listitem.xml file
+            // Get the text boxes from the listitem.xml file
             TextView textViewName = (TextView)webCamExtendedInfoDtoView.findViewById(R.id.textViewName);
             TextView textViewDistance = (TextView)webCamExtendedInfoDtoView.findViewById(R.id.textViewDistance);
 
-            //Assign the appropriate data from our alert object above
+            // Assign the appropriate data from our alert object above
             textViewName.setText(webCamExtendedInfoDto.Name);
             textViewDistance.setText((double)Math.round(webCamExtendedInfoDto.Distance * 100)/100 + "km away from you.");
 
+            // Set a gradual transition darkening colours as cams get further away...
+            int colourDiff = 255 - (int)Math.round(webCamExtendedInfoDto.Distance * 7);
+            if (colourDiff < 0) {
+                colourDiff = 14;
+            }
+            webCamExtendedInfoDtoView.setBackgroundColor(Color.argb(255, colourDiff, colourDiff, colourDiff));
+
+            // Return the View
             return webCamExtendedInfoDtoView;
         }
 

@@ -24,6 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CameraPositionCreator;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -131,9 +132,11 @@ public class MapAPIv2Fragment extends SupportMapFragment implements SeekBar.OnSe
 
         /* We populate the cameras, if there are any */
         if (webCamExtendedInfoDtos != null) {
+
             this.mWebCamExtendedInfoDtos = webCamExtendedInfoDtos;
             this.mGoogleMap.clear();
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
             /* Add markers for cameras */
             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher);
             for (int i = 0; i < this.mSeekBarClosestCameras.getProgress(); i++) {
@@ -144,17 +147,33 @@ public class MapAPIv2Fragment extends SupportMapFragment implements SeekBar.OnSe
                 builder.include(marker.getPosition());
                 this.mGoogleMap.addMarker(marker);
             }
+
             /* Add marker for current location */
             GeoMarkerDto currentLocation = Globals.getGetCurrentLocation();
+            LatLng currentLocationLatLng = new LatLng(currentLocation.yCoord, currentLocation.xCoord);
             MarkerOptions marker = new MarkerOptions()
-                    .position(new LatLng(currentLocation.yCoord, currentLocation.xCoord));
+                    .position(currentLocationLatLng)
+                    .title("My Location");
             builder.include(marker.getPosition());
             this.mGoogleMap.addMarker(marker);
-            /* Build the marker map */
+
+            /* Build the marker map and set position */
             LatLngBounds bounds = builder.build();
-            int padding = 0; // offset from edges of the map in pixels
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            this.mGoogleMap.animateCamera(cu);
+            int padding = 50; // offset from edges of the map in pixels
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            this.mGoogleMap.animateCamera(cameraUpdate);
+
+            /* Camera position with tilt (unable to set bounds so not using currently)
+            CameraPosition cameraPosition =
+                    new CameraPosition.Builder().target(currentLocationLatLng)
+                            .zoom(17)
+                            .bearing(320)
+                            .tilt(30)
+                            .build();
+            this.mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            */
+
+            /* Announce the result */
             Toast.makeText(getActivity().getApplicationContext(), "Showing closest " + mSeekBarProgress + " cameras.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity().getApplicationContext(), "No cameras found nearby.\nAt least one geo-marker is required to determine what cameras are nearby.\nHave you switched on geo-marker collection yet?", Toast.LENGTH_LONG).show();
