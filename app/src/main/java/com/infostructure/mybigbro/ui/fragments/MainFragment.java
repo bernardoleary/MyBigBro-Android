@@ -26,6 +26,7 @@ import com.infostructure.mybigbro.R;
 import com.infostructure.mybigbro.services.DataAccessService;
 import com.infostructure.mybigbro.services.GeoMarkerService;
 import com.infostructure.mybigbro.ui.OnFragmentInteractionListener;
+import com.infostructure.mybigbro.ui.activities.AboutActivity;
 import com.infostructure.mybigbro.ui.activities.SettingsActivity;
 
 public class MainFragment extends Fragment {
@@ -45,6 +46,7 @@ public class MainFragment extends Fragment {
     TextView mTextViewMessagePaused2;
     TextView mTextViewMessageRunningDeviceName;
     TextView mTextViewMessagePausedDeviceName;
+    TextView mTextViewMessageAbout;
 
     // Services
     private DataAccessService mDataAccessService;
@@ -110,6 +112,7 @@ public class MainFragment extends Fragment {
         this.mTextViewMessagePaused2 = (TextView)rootView.findViewById(R.id.textViewMessagePaused2);
         this.mTextViewMessageRunningDeviceName = (TextView)rootView.findViewById(R.id.textViewMessageRunningDeviceName);
         this.mTextViewMessagePausedDeviceName = (TextView)rootView.findViewById(R.id.textViewMessagePausedDeviceName);
+        this.mTextViewMessageAbout = (TextView)rootView.findViewById(R.id.textViewMessageAbout);
         this.mToggleButton = (ToggleButton)rootView.findViewById(R.id.toggleButton);
         this.mToggleButton.setChecked(isGeoMarkerServiceRunning());
         //text = (TextView)rootView.findViewById(R.id.textView1);
@@ -147,14 +150,24 @@ public class MainFragment extends Fragment {
         this.mTextViewMessagePaused2.setVisibility(isRunning ? View.GONE : View.VISIBLE);
         this.mTextViewMessagePausedDeviceName.setVisibility(isRunning ? View.GONE : View.VISIBLE);
         try {
-            this.mTextViewMessagePausedDeviceName.setText("Your device name is: '" + this.mDataAccessService.getDeviceName() + "'\nClick here to change.");
+            this.mTextViewMessagePausedDeviceName.setText(
+                    "Your device's name is: '" + this.mDataAccessService.getDeviceName() + "'."
+                    + "\nClick here to change the name.");
             this.mTextViewMessagePausedDeviceName.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v){
                     Intent intent = new Intent(getActivity(), SettingsActivity.class);
                     startActivity(intent);
                 }
             });
-            this.mTextViewMessageRunningDeviceName.setText(Html.fromHtml("Browse to: <a href=\"http://mybigbro.tv/?devicename=" + this.mDataAccessService.getDeviceName() + "\">mybigbro.tv/?devicename=" + this.mDataAccessService.getDeviceName() + "</a>\nto see your captured images!"));
+            this.mTextViewMessageAbout.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v){
+                    Intent intent = new Intent(getActivity(), AboutActivity.class);
+                    startActivity(intent);
+                }
+            });
+            this.mTextViewMessageRunningDeviceName.setText(Html.fromHtml(
+                    "View images captured by My Big Bro anytime"
+                    + "\nby browsing to <a href=\"http://mybigbro.tv/?devicename=" + this.mDataAccessService.getDeviceName() + "\">mybigbro.tv</a>!"));
             this.mTextViewMessageRunningDeviceName.setLinksClickable(true);
             this.mTextViewMessageRunningDeviceName.setMovementMethod(LinkMovementMethod.getInstance());
         } catch (Exception e) {

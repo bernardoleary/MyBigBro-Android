@@ -1,5 +1,7 @@
 package com.infostructure.mybigbro.utils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.infostructure.mybigbro.model.CapturedImage;
@@ -18,7 +20,7 @@ public class Mapper {
 	
 	public GeoMarkerDto GeoMarkerToGeoMarkerDto(GeoMarker geoMarker) {
 		GeoMarkerDto geoMarkerDto = new GeoMarkerDto();
-		geoMarkerDto.markerDateTime = geoMarker.getMarkerDateTime().toGMTString();
+		geoMarkerDto.markerDateTime = android.text.format.DateFormat.format("dd MMM yyyy hh:mm:ss", geoMarker.getMarkerDateTime()).toString();
         geoMarkerDto.xCoord = geoMarker.getXCoord();
         geoMarkerDto.yCoord = geoMarker.getYCoord();
         return geoMarkerDto;

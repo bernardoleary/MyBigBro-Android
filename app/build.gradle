@@ -11,6 +11,14 @@ android {
         versionCode 12
         versionName "2.0"
     }
+    signingConfigs {
+        release {
+            storeFile file("D:\\Setups\\Eclipse\\keystore\\app_keystore")
+            storePassword "kIytYAmGaUv1CtEHhOEo"
+            keyAlias "infostructure app keystore 2012"
+            keyPassword "kIytYAmGaUv1CtEHhOEo"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
