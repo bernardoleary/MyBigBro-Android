@@ -92,6 +92,18 @@
             android:layout_gravity="right|bottom"/>
 
         <TextView
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Placeholder."
+            android:id="@+id/textViewMessageStatus"
+            android:textColor="#ff000000"
+            android:background="@drawable/rounded_corners_ff6bd456"
+            android:layout_row="57"
+            android:layout_column="0"
+            android:gravity="right" />
+
+        <TextView
             android:layout_width="290dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"

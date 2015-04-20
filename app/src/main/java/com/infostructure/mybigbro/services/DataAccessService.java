@@ -27,6 +27,7 @@ import com.google.gson.reflect.TypeToken;
 //import com.infostructure.simplelist.model.dto.SimpleListItemDto;
 import com.infostructure.mybigbro.model.GeoMarker;
 import com.infostructure.mybigbro.model.UserCredentials;
+import com.infostructure.mybigbro.model.dto.CapturedImageDto;
 import com.infostructure.mybigbro.model.dto.CapturedImageGeoMarkerDto;
 import com.infostructure.mybigbro.model.dto.GeoMarkerDto;
 import com.infostructure.mybigbro.model.dto.WebCamDto;
@@ -63,6 +64,7 @@ public class DataAccessService {
     private final String LATEST = "latest";
 	private final String SETTINGS_FILE_NAME = "settings";
 	private final String TOP = "top";
+    private final String COUNT = "count";
 	private final String DEVICE_NAME = "deviceName";
     private final String POLL_FREQUENCY = "pollFrequency";
 	private final String USER_NAME = "userName";
@@ -130,6 +132,26 @@ public class DataAccessService {
 		CapturedImageGeoMarkerDto[] capturedImageGeoMarkerDtos = gson.fromJson(result, CapturedImageGeoMarkerDto[].class);
 		return capturedImageGeoMarkerDtos[0].capturedImage.url; //.getCapturedImage().getUrl();
 	}
+
+    public CapturedImageDto getLastestImage() throws Exception {
+        String geoMarkersCapturedImagesUrl = URL + GEOMARKERS + FORWARD_SLASH + CAPTURED_IMAGES + QUESTION_MARK + TOP + EQUALS + "1" + AMPERSAND + DEVICE_NAME + EQUALS + getDeviceName();
+        WebService webService = new WebService(geoMarkersCapturedImagesUrl);
+        // Query the service
+        String result = webService.webGet("", new HashMap<String, String>());
+        // Get image URL
+        Gson gson = new GsonBuilder().create();
+        CapturedImageGeoMarkerDto[] capturedImageGeoMarkerDtos = gson.fromJson(result, CapturedImageGeoMarkerDto[].class);
+        return capturedImageGeoMarkerDtos[0].capturedImage; //.getCapturedImage().getUrl();
+    }
+
+    public int getGetCountOfMarkersWithImage() throws Exception {
+        String geoMarkersCapturedImagesUrl = URL + GEOMARKERS + FORWARD_SLASH + CAPTURED_IMAGES + FORWARD_SLASH + COUNT + QUESTION_MARK + DEVICE_NAME + EQUALS + getDeviceName();
+        WebService webService = new WebService(geoMarkersCapturedImagesUrl);
+        // Query the service
+        String result = webService.webGet("", new HashMap<String, String>());
+        // Return count
+        return Integer.valueOf(result);
+    }
 
     public GeoMarkerDto getLastestGeoMarker() throws Exception {
         String geoMarkersCapturedImagesUrl = URL + GEOMARKERS + FORWARD_SLASH + LATEST + QUESTION_MARK + DEVICE_NAME + EQUALS + getDeviceName();

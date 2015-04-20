@@ -28,6 +28,9 @@ import com.infostructure.mybigbro.services.GeoMarkerService;
 import com.infostructure.mybigbro.ui.OnFragmentInteractionListener;
 import com.infostructure.mybigbro.ui.activities.AboutActivity;
 import com.infostructure.mybigbro.ui.activities.SettingsActivity;
+import com.infostructure.mybigbro.utils.Mapper;
+
+import java.util.Date;
 
 public class MainFragment extends Fragment {
 
@@ -47,6 +50,7 @@ public class MainFragment extends Fragment {
     TextView mTextViewMessageRunningDeviceName;
     TextView mTextViewMessagePausedDeviceName;
     TextView mTextViewMessageAbout;
+    TextView mTextViewMessageStatus;
 
     // Services
     private DataAccessService mDataAccessService;
@@ -113,6 +117,7 @@ public class MainFragment extends Fragment {
         this.mTextViewMessageRunningDeviceName = (TextView)rootView.findViewById(R.id.textViewMessageRunningDeviceName);
         this.mTextViewMessagePausedDeviceName = (TextView)rootView.findViewById(R.id.textViewMessagePausedDeviceName);
         this.mTextViewMessageAbout = (TextView)rootView.findViewById(R.id.textViewMessageAbout);
+        this.mTextViewMessageStatus = (TextView)rootView.findViewById(R.id.textViewMessageStatus);
         this.mToggleButton = (ToggleButton)rootView.findViewById(R.id.toggleButton);
         this.mToggleButton.setChecked(isGeoMarkerServiceRunning());
         //text = (TextView)rootView.findViewById(R.id.textView1);
@@ -165,11 +170,15 @@ public class MainFragment extends Fragment {
                     startActivity(intent);
                 }
             });
+            // Set the web page link text
             this.mTextViewMessageRunningDeviceName.setText(Html.fromHtml(
                     "View images captured by My Big Bro anytime"
-                    + "\nby browsing to <a href=\"http://mybigbro.tv/?devicename=" + this.mDataAccessService.getDeviceName() + "\">mybigbro.tv</a>!"));
+                    + "\nby browsing to <a href=\"http://mybigbro.tv/?deviceName=" + this.mDataAccessService.getDeviceName() + "\">mybigbro.tv</a>!"));
             this.mTextViewMessageRunningDeviceName.setLinksClickable(true);
             this.mTextViewMessageRunningDeviceName.setMovementMethod(LinkMovementMethod.getInstance());
+            // Set the latest captured images text
+            this.mTextViewMessageStatus.setText(
+                    "So far you've captured " + this.mDataAccessService.getGetCountOfMarkersWithImage() + " images.");
         } catch (Exception e) {
             e.printStackTrace();
         }
