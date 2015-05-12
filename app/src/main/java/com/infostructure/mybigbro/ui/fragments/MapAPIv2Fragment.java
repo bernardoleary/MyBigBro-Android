@@ -161,17 +161,22 @@ public class MapAPIv2Fragment extends SupportMapFragment implements SeekBar.OnSe
             LatLngBounds bounds = builder.build();
             int padding = 50; // offset from edges of the map in pixels
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            this.mGoogleMap.animateCamera(cameraUpdate);
 
-            /* Camera position with tilt (unable to set bounds so not using currently)
-            CameraPosition cameraPosition =
-                    new CameraPosition.Builder().target(currentLocationLatLng)
-                            .zoom(17)
-                            .bearing(320)
-                            .tilt(30)
-                            .build();
-            this.mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            */
+            /* Zoom to bounds then set tilt on view */
+            this.mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50),
+                new GoogleMap.CancelableCallback() {
+                    @Override
+                    public void onFinish() {
+                        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder(mGoogleMap.getCameraPosition())
+                                .bearing(30)
+                                .tilt(45)
+                                .build()));
+                    }
+
+                    @Override
+                    public void onCancel() {
+                    }
+                });
 
             /* Announce the result */
             Toast.makeText(getActivity().getApplicationContext(), "Showing closest " + mSeekBarProgress + " cameras.", Toast.LENGTH_SHORT).show();
