@@ -20,7 +20,7 @@ public class Mapper {
 	
 	public GeoMarkerDto GeoMarkerToGeoMarkerDto(GeoMarker geoMarker) {
 		GeoMarkerDto geoMarkerDto = new GeoMarkerDto();
-		geoMarkerDto.markerDateTime = android.text.format.DateFormat.format("dd MMM yyyy hh:mm:ss", geoMarker.getMarkerDateTime()).toString();
+		geoMarkerDto.markerDateTime = android.text.format.DateFormat.format("dd MMM yyyy kk:mm:ss", geoMarker.getMarkerDateTime()).toString();
         geoMarkerDto.xCoord = geoMarker.getXCoord();
         geoMarkerDto.yCoord = geoMarker.getYCoord();
         return geoMarkerDto;
